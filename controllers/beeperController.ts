@@ -1,118 +1,117 @@
 import { Request, Response, NextFunction } from "express";
-import {
-  getBooks,
-  addBook,
-  editBook,
-  deleteBook,
-} from "../services/BookService.js";
-import { Book } from "../models/types.js";
+import { Beeper, Status } from "../models/types.js";
 import { ErrorWithStatusCode } from "../ErrorsModels/errorTypes.js";
+import {
+  getAllBeepers,
+  createNewBeeper,
+  getBeeperById,
+  deleteBeeperById,
+  getStatusById,
+  updateStatus,
+} from "../services/beeperService.js";
 
 export const getBeepers = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {};
+): Promise<void> => {
+  try {
+    const beepers: Beeper[] = await getAllBeepers();
+    res.status(200).send(beepers);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createBeeper = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {};
+): Promise<void> => {
+  try {
+    const name = req.body.name;
+    if (!name) {
+      throw new ErrorWithStatusCode("name required", 400);
+    }
+    const beeper: Beeper = await createNewBeeper(name);
+    res.status(201).send(beeper);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getBeeperDetail = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {};
+): Promise<void> => {
+  try {
+    const beeperId = req.params.id;
+    if (!beeperId) {
+      throw new ErrorWithStatusCode("beeper id required", 400);
+    }
+    const beeper: Beeper = await getBeeperById(beeperId);
+
+    res.status(200).send(beeper);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const deleteBeeper = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {};
+): Promise<void> => {
+  try {
+    const beeperId = req.params.id;
+    if (!beeperId) {
+      throw new ErrorWithStatusCode("beeper id required", 400);
+    }
+    await deleteBeeperById(beeperId);
+
+    res.status(204).send("beeper deleted successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateStatusBeeper = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {};
-export const getBeeperByStatus = async (
+): Promise<void> => {
+  try {
+    const beeperId = req.params.id;
+    if (!beeperId) {
+      throw new ErrorWithStatusCode("beeper id required", 400);
+    }
+    const status: Status = await getStatusById(beeperId);
+    let LON: Number = 0;
+    let LAT: Number = 0;
+    if (status == Status.SHIPPED) {
+      LON = Number(req.body.longitude);
+      LAT = Number(req.body.latitude);
+
+      if (!LON || !LAT) {
+        throw new ErrorWithStatusCode("longitude and latitude required", 400);
+      }
+    }
+    const beeper: Beeper = await updateStatus(beeperId, LON, LAT);
+
+    res.status(200).send(beeper);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getBeepersByStatus = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {};
-
-// export const getBooksFromUser = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ): Promise<void> => {
-//   try {
-//     if (!req.query.userId) {
-//       throw new ErrorWithStatusCode("userId required", 400);
-//     }
-//     const userId: string = req.query.userId.toString();
-
-//     res.status(200).send(await getBooks(userId));
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-// export const addBookToUser = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ): Promise<void> => {
-//   try {
-//     const userId: string = req.body.userId;
-//     const bookName: string = req.body.bookName;
-//     if (!bookName) {
-//       throw new ErrorWithStatusCode("book name required", 400);
-//     }
-
-//     const addedBook = await addBook(userId, bookName);
-//     res.status(201).send({ bookId: addedBook.id, book: addedBook });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-
-// export const updateBook = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ): Promise<void> => {
-//   try {
-//     const userId: string = req.body.userId;
-//     const bookId: number = Number(req.params.bookId);
-//     const updateData: Book = req.body.updateData;
-
-//     if (!bookId) {
-//       throw new ErrorWithStatusCode("book id required", 400);
-//     }
-//     if (!updateData) {
-//       throw new ErrorWithStatusCode("update data required", 400);
-//     }
-//     await editBook(userId, bookId, updateData);
-//     res.status(204).send("Book updated successfully");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-// export const deleteBookFromUser = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ): Promise<void> => {
-//   try {
-//     const userId: string = req.body.userId;
-//     const bookId: number = Number(req.params.bookId);
-//     if (!bookId) {
-//       throw new ErrorWithStatusCode("book id required", 400);
-//     }
-
-//     await deleteBook(userId, bookId);
-//     res.status(204).send("Book deleted successfully");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+): Promise<void> => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};

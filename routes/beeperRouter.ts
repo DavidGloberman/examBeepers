@@ -5,7 +5,7 @@ import {
   getBeeperDetail,
   deleteBeeper,
   updateStatusBeeper,
-  getBeeperByStatus,
+  getBeepersByStatus,
 } from "../controllers/beeperController.js";
 
 const router: Router = express.Router();
@@ -16,6 +16,6 @@ router.route("/:Id").get(getBeeperDetail).delete(deleteBeeper);
 
 router.route("/:id/status").put(updateStatusBeeper);
 
-router.route("/status/:status").get(getBeeperByStatus);
+router.route("/status/:status").get(getBeepersByStatus);
 
 export default router;

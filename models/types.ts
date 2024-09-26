@@ -1,13 +1,13 @@
 export enum Status {
-  MANUFACTURED,
-  ASSEMBLED,
-  SHIPPED,
-  DEPLOYED,
-  DETONATED,
+  MANUFACTURED = "manufactured",
+  ASSEMBLED = "assembled",
+  SHIPPED = "shipped",
+  DEPLOYED = "deployed",
+  DETONATED = "detonated",
 }
 
 export interface Beeper {
-  id: Number;
+  id: string;
   name: string;
   status: Status;
   created_at: Date;
