@@ -1,16 +1,17 @@
-export interface User {
-  id?: string;
-  userName: string;
-  password: string;
-  books: Book[];
+export enum Status {
+  MANUFACTURED,
+  ASSEMBLED,
+  SHIPPED,
+  DEPLOYED,
+  DETONATED,
 }
 
-export interface Book {
-  id?: string;
-  title?: string;
-  author?: string;
-  publication_year?: number;
-  genre?: [string];
-  description?: string;
-  cover_image?: string;
+export interface Beeper {
+  id: Number;
+  name: string;
+  status: Status;
+  created_at: Date;
+  detonated_at: Date;
+  latitude: Number;
+  longitude: Number;
 }
