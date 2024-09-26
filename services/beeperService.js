@@ -56,10 +56,14 @@ function validateCoordinates(LON, LAT) {
 function setTargetAndDetonationTime(beeper, LON, LAT) {
     beeper.latitude = LON;
     beeper.longitude = LAT;
-    setTimeout(() => {
+    setTimeout(() => __awaiter(this, void 0, void 0, function* () {
         beeper.status = Status.DETONATED;
         beeper.detonated_at = new Date();
-    }, 1000);
+        const beepers = yield readJsonFile();
+        const beeperIndex = beepers.findIndex((b) => b.id == beeper.id);
+        beepers[beeperIndex] = beeper;
+        yield writeToJsonFile(beepers);
+    }), 10000);
 }
 export const updateStatus = (beeperId, LON, LAT) => __awaiter(void 0, void 0, void 0, function* () {
     const beepers = yield readJsonFile();

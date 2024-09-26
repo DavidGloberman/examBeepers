@@ -59,10 +59,15 @@ function setTargetAndDetonationTime(beeper: Beeper, LON: Number, LAT: Number) {
   beeper.latitude = LON;
   beeper.longitude = LAT;
 
-  setTimeout(() => {
+  setTimeout(async () => {
     beeper.status = Status.DETONATED;
     beeper.detonated_at = new Date();
-  }, 1000);
+
+    const beepers: Beeper[] = await readJsonFile();
+    const beeperIndex = beepers.findIndex((b) => b.id == beeper.id);
+    beepers[beeperIndex] = beeper;
+    await writeToJsonFile(beepers);
+  }, 10000);
 }
 
 export const updateStatus = async (
@@ -99,7 +104,6 @@ export const updateStatus = async (
 export const getBeepersByStatusService = async (
   status: string
 ): Promise<Beeper[]> => {
-
   if (!status) {
     throw new ErrorWithStatusCode("status required", 400);
   }
@@ -115,5 +119,3 @@ export const getBeepersByStatusService = async (
 
   return filteredBeepers;
 };
-
-

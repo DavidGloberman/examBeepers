@@ -15,3 +15,7 @@ export interface Beeper {
   latitude?: Number;
   longitude?: Number;
 }
+
+export interface BeeperDTO extends Omit<Beeper, "status"> {
+  status: string;
+}
