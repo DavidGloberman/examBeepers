@@ -1,6 +1,7 @@
 import { Beeper, Status } from "../models/types.js";
 import { readJsonFile, writeToJsonFile } from "../DAL/beeperJson.js";
 import { ErrorWithStatusCode } from "../ErrorsModels/errorTypes.js";
+import { coordinates } from "../data/coordinates.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const getAllBeepers = async (): Promise<Beeper[]> => {
@@ -15,9 +16,6 @@ export const createNewBeeper = async (name: string): Promise<Beeper> => {
     name: name,
     status: Status.MANUFACTURED,
     created_at: new Date(),
-    detonated_at: new Date(),
-    latitude: 0,
-    longitude: 0,
   };
 
   beepers.push(newBeeper);
@@ -44,14 +42,28 @@ export const deleteBeeperById = async (beeperId: string): Promise<void> => {
   await writeToJsonFile(beepers);
 };
 
-export const getStatusById = async (beeperId: string): Promise<Status> => {
-  const beepers: Beeper[] = await readJsonFile();
-  const beeper: Beeper = beepers.find((beeper) => beeper.id == beeperId)!;
-  if (!beeper) {
-    throw new ErrorWithStatusCode("beeper not found", 404);
+function validateCoordinates(LON: Number, LAT: Number) {
+  if (!LON || !LAT) {
+    throw new ErrorWithStatusCode("longitude and latitude required", 400);
   }
-  return beeper.status;
-};
+  if (
+    !coordinates.find(
+      (coordinate) => coordinate.lat == LAT && coordinate.lon == LON
+    )
+  ) {
+    throw new ErrorWithStatusCode("invalid coordinates", 400);
+  }
+}
+
+function setTargetAndDetonationTime(beeper: Beeper, LON: Number, LAT: Number) {
+  beeper.latitude = LON;
+  beeper.longitude = LAT;
+
+  setTimeout(() => {
+    beeper.status = Status.DETONATED;
+    beeper.detonated_at = new Date();
+  }, 1000);
+}
 
 export const updateStatus = async (
   beeperId: string,
@@ -63,14 +75,45 @@ export const updateStatus = async (
   if (!beeper) {
     throw new ErrorWithStatusCode("beeper not found", 404);
   }
-  
-  if (!LON || !LAT) {
-    
+
+  const status: Status = beeper.status;
+
+  // bed request if status is detonated or deployed
+  if (status == Status.DETONATED || status == Status.DEPLOYED) {
+    throw new ErrorWithStatusCode("bed request for this status", 400);
   }
-  beeper.status = Status.SHIPPED;
-  beeper.detonated_at = new Date();
-  beeper.latitude = LON;
-  beeper.longitude = LAT;
+
+  // set Beeper if status is shipped
+  if (status == Status.SHIPPED) {
+    validateCoordinates(LON, LAT);
+    setTargetAndDetonationTime(beeper, LON, LAT);
+  }
+
+  // increment status
+  beeper.status++;
+
   await writeToJsonFile(beepers);
   return beeper;
 };
+
+export const getBeepersByStatusService = async (
+  status: string
+): Promise<Beeper[]> => {
+
+  if (!status) {
+    throw new ErrorWithStatusCode("status required", 400);
+  }
+
+  if (!Object.keys(Status).includes(status)) {
+    throw new ErrorWithStatusCode("invalid status", 400);
+  }
+
+  const beepers: Beeper[] = await getAllBeepers();
+  const filteredBeepers: Beeper[] = beepers.filter(
+    (beeper) => Status[beeper.status] == status
+  );
+
+  return filteredBeepers;
+};
+
+

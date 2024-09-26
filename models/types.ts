@@ -11,7 +11,7 @@ export interface Beeper {
   name: string;
   status: Status;
   created_at: Date;
-  detonated_at: Date;
-  latitude: Number;
-  longitude: Number;
+  detonated_at?: Date;
+  latitude?: Number;
+  longitude?: Number;
 }

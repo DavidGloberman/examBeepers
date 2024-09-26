@@ -6,8 +6,8 @@ import {
   createNewBeeper,
   getBeeperById,
   deleteBeeperById,
-  getStatusById,
   updateStatus,
+  getBeepersByStatusService,
 } from "../services/beeperService.js";
 
 export const getBeepers = async (
@@ -86,25 +86,9 @@ export const updateStatusBeeper = async (
     if (!beeperId) {
       throw new ErrorWithStatusCode("beeper id required", 400);
     }
-    const status: Status = await getStatusById(beeperId);
+    const LAT: number = Number(req.body.latitude);
+    const LON: number = Number(req.body.longitude);
 
-    // check if status is detonated or deployed
-    if (status == Status.DETONATED || status == Status.DEPLOYED) {
-      throw new ErrorWithStatusCode("bed request for this status", 400);
-    }
-
-    let LON: Number = 0;
-    let LAT: Number = 0;
-
-    // check if status is shipped
-    if (status == Status.SHIPPED) {
-      LON = Number(req.body.longitude);
-      LAT = Number(req.body.latitude);
-
-      if (!LON || !LAT) {
-        throw new ErrorWithStatusCode("longitude and latitude required", 400);
-      }
-    }
     const beeper: Beeper = await updateStatus(beeperId, LON, LAT);
 
     res.status(200).send(beeper);
@@ -119,6 +103,11 @@ export const getBeepersByStatus = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    const status: string = req.params.status;
+
+    const filteredBeepers: Beeper[] = await getBeepersByStatusService(status);
+
+    res.status(200).send(filteredBeepers);
   } catch (error) {
     next(error);
   }
