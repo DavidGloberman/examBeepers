@@ -87,8 +87,16 @@ export const updateStatusBeeper = async (
       throw new ErrorWithStatusCode("beeper id required", 400);
     }
     const status: Status = await getStatusById(beeperId);
+
+    // check if status is detonated or deployed
+    if (status == Status.DETONATED || status == Status.DEPLOYED) {
+      throw new ErrorWithStatusCode("bed request for this status", 400);
+    }
+
     let LON: Number = 0;
     let LAT: Number = 0;
+
+    // check if status is shipped
     if (status == Status.SHIPPED) {
       LON = Number(req.body.longitude);
       LAT = Number(req.body.latitude);

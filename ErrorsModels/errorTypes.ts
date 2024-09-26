@@ -6,20 +6,6 @@ class ErrorWithStatusCode extends Error {
   }
 }
 
-class UserNotFoundError extends ErrorWithStatusCode {
-  constructor(message?: string) {
-    super(message || "user not found", 404);
-    this.name = "UserNotFoundError";
-  }
-}
-
-class UserAlreadyExistsError extends ErrorWithStatusCode {
-  constructor(message?: string) {
-    super(message || "user already exists", 409);
-    this.name = "UserAlreadyExists";
-  }
-}
-
 class MissingTokenError extends ErrorWithStatusCode {
   constructor(message?: string) {
     super(message || "missing token", 403);
@@ -28,8 +14,6 @@ class MissingTokenError extends ErrorWithStatusCode {
 }
 
 export {
-  UserNotFoundError,
-  UserAlreadyExistsError as UserAlreadyExists,
   MissingTokenError as MissingToken,
   ErrorWithStatusCode,
 };

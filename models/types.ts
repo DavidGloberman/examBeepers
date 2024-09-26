@@ -1,9 +1,9 @@
 export enum Status {
-  MANUFACTURED = "manufactured",
-  ASSEMBLED = "assembled",
-  SHIPPED = "shipped",
-  DEPLOYED = "deployed",
-  DETONATED = "detonated",
+  MANUFACTURED,
+  ASSEMBLED,
+  SHIPPED,
+  DEPLOYED,
+  DETONATED,
 }
 
 export interface Beeper {

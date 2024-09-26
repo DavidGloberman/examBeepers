@@ -63,6 +63,10 @@ export const updateStatus = async (
   if (!beeper) {
     throw new ErrorWithStatusCode("beeper not found", 404);
   }
+  
+  if (!LON || !LAT) {
+    
+  }
   beeper.status = Status.SHIPPED;
   beeper.detonated_at = new Date();
   beeper.latitude = LON;
