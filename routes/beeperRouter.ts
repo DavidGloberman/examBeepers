@@ -12,7 +12,7 @@ const router: Router = express.Router();
 
 router.route("/").get(getBeepers).post(createBeeper);
 
-router.route("/:Id").get(getBeeperDetail).delete(deleteBeeper);
+router.route("/:id").get(getBeeperDetail).delete(deleteBeeper);
 
 router.route("/:id/status").put(updateStatusBeeper);
 

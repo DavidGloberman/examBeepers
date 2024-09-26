@@ -64,13 +64,13 @@ export const deleteBeeper = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const beeperId = req.params.id;
+    const beeperId: string = req.params.id;
     if (!beeperId) {
       throw new ErrorWithStatusCode("beeper id required", 400);
     }
     await deleteBeeperById(beeperId);
 
-    res.status(204).send("beeper deleted successfully");
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
@@ -88,6 +88,7 @@ export const updateStatusBeeper = async (
     }
     const LAT: number = Number(req.body.latitude);
     const LON: number = Number(req.body.longitude);
+    console.log(LON, LAT)
 
     const beeper: Beeper = await updateStatus(beeperId, LON, LAT);
 
